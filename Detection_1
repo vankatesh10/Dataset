@@ -1,45 +1,29 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
+import matplotlib.pyplot as py
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model
+import warnings
+warnings.filterwarnings("ignore")
+df=pd.read_csv('Salary_Data.csv')
 
+x_train,x_test,y_train,y_test = train_test_split(df[["YearsExperience"]],df["Salary"], test_size = 1/3, random_state =0)
 
-data = pd.read_csv('Salary_Data.csv')
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1/3, random_state=0)
-
-
-model = LinearRegression()
-model.fit(X_train, y_train)
+model=linear_model.LinearRegression()
+model.fit(x_train,y_train)
+model.predict(x_test)
 
 
 y_pred = model.predict(X_test)
 
+r_sq=model.score(x_test,y_test)
+intercept=model.intercept_
+slope=model.coef_
+print("intercept={} slope={} r_sq={}".format(intercept,slope,r_sq))
 
-mse = mean_squared_error(y_test, y_pred)
-print("Mean Squared Error:", mse)
-
-
-r2 = r2_score(y_test, y_pred)
-print("R-squared Score:", r2)
-
-print("Slope:", model.coef_[0])
-print("Intercept:", model.intercept_)
-print()
-
-d1 = pd.DataFrame(X_test, columns=['Years of Experience'])
-d1["Actual Salary"] = y_test
-d1["Predicted Salary"] = y_pred
-print(d1)
-
-plt.scatter(X_train, y_train, color='blue', label='Training Data')
-plt.scatter(X_test, y_test, color='red', label='Testing Data')
-plt.plot(X_test, y_pred, color='green', linewidth=2, label='Regression Line')
-
-plt.xlabel('Years of Experience')
-plt.ylabel('Salary')
-plt.title('Linear Regression')
-plt.legend()
-plt.show()
+py.scatter(x_train,y_train,color='r',marker="x",label="training_data")
+py.scatter(x_test,y_test,color='g',label="testing data")
+py.plot(x_test,model.predict(x_test),color="b",label="predicted")
+py.xlabel("Year of Experience")
+py.ylabel("Salary")
+py.legend()
